@@ -123,13 +123,22 @@ public_users.get('/title/:title',function (req, res) {
 public_users.get('/review/:isbn',function (req, res) {
   //Write your code here
   const isbn = req.params.isbn;
-  const book = books[isbn];
 
-  if (book && book.reviews) {
-    res.json(book.reviews);      // Si se encuentra el libro y tiene reseñas, devuelve las reseñas
-  } else {
-    res.status(404).json({ message: "Reseñas no encontradas o ISBN inválido" }); // Si no se encuentra el libro o no tiene reseñas
-  }
+  getBooks((err,books)=>{
+    if (err) {
+      // Manejar errores
+      return res.status(500).json({ message: "Error al obtener los libros", error: err.message });
+    }
+
+    const book = books[isbn];
+
+    if (book && book.reviews) {
+      return res.status(200).json(book.reviews);     // Si se encuentra el libro y tiene reseñas, devuelve las reseñas
+    } else {
+      res.status(404).json({ message: "Reseñas no encontradas o ISBN inválido" }); // Si no se encuentra el libro o no tiene reseñas
+    }
+
+  })
 });
 
 module.exports.general = public_users;
